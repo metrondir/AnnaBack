@@ -21,16 +21,17 @@ const upload = multer({
 
 const getPriceCards = asyncHandler(async (req, res, next) => {
   try {
-    const PriceCard = cardService.getPriceCards(req, req, next);
-    return PriceCard;
+    const PriceCard = await cardService.getPriceCards();
+    console.log(PriceCard);
+    return res.status(200).json(PriceCard);
   } catch (error) {
     next(error);
   }
 });
 const getCourseCards = asyncHandler(async (req, res, next) => {
   try {
-    const CourseCard = cardService.getCourseCards(req, req, next);
-    return CourseCard;
+    const CourseCard = await cardService.getCourseCards();
+    return res.status(200).json(CourseCard);
   } catch (error) {
     next(error);
   }
