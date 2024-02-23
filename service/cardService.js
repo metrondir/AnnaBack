@@ -4,11 +4,6 @@ const CourseCardModel = require("../models/courseCardModel");
 const PriceCardModel = require("../models/priceCardModel");
 const imgur = require("imgur");
 
-//const client = new ImgurClient({
-//  clientId: process.env.IMGUR_CLIENT_ID,
-//  clientSecret: process.env.IMGUR_CLIENT_SECRET,
-//});
-
 const getCourseCards = asyncHandler(async () => {
   const CourseCard = await CourseCardModel.find();
 
@@ -45,9 +40,62 @@ const createPriceCard = asyncHandler(async (req, res, next) => {
     throw new Error(error);
   }
 });
+
+const deleteCourseCard = asyncHandler(async (id) => {
+  try {
+    const CourseCard = await CourseCardModel.findByIdAndDelete(id);
+    return CourseCard;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const deletePriceCard = asyncHandler(async (id) => {
+  try {
+    const CourseCard = await PriceCardModel.findByIdAndDelete(id);
+    return CourseCard;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const updateCourseCard = asyncHandler(async (id, req) => {
+  try {
+    const CourseCard = await CourseCardModel.findByIdAndUpdate(id, req);
+    return CourseCard;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const updatePriceCard = asyncHandler(async (id, req) => {
+  try {
+    const CourseCard = await PriceCardModel.findByIdAndUpdate(id, req);
+    return CourseCard;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const getNumberOfCourseCards = asyncHandler(async () => {
+  const CourseCards = await CourseCardModel.find();
+  return CourseCards.length;
+});
+
+const getNumberOfPriceCards = asyncHandler(async () => {
+  const CourseCards = await PriceCardModel.find();
+  return CourseCards.length;
+});
+
 module.exports = {
   getPriceCards,
   getCourseCards,
   createCourseCard,
   createPriceCard,
+  deleteCourseCard,
+  deletePriceCard,
+  updateCourseCard,
+  updatePriceCard,
+  getNumberOfCourseCards,
+  getNumberOfPriceCards,
 };

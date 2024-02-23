@@ -58,9 +58,69 @@ const createPriceCard = [
     }
   }),
 ];
+
+const deleteCourseCard = asyncHandler(async (req, res, next) => {
+  try {
+    await cardService.deleteCourseCard(req.params.id);
+    return res.status(200).json("Course Card deleted");
+  } catch (error) {
+    next(error);
+  }
+});
+const deletePriceCard = asyncHandler(async (req, res, next) => {
+  try {
+    await cardService.deletePriceCard(req.params.id);
+    return res.status(200).json("Course Card deleted");
+  } catch (error) {
+    next(error);
+  }
+});
+
+const updateCourseCard = asyncHandler(async (req, res, next) => {
+  try {
+    await cardService.updateCourseCard(req.params.id, req.body);
+    return res.status(200).json("Course Card updated");
+  } catch (error) {
+    next(error);
+  }
+});
+
+const updatePriceCard = asyncHandler(async (req, res, next) => {
+  try {
+    await cardService.updatePriceCard(req.params.id, req.body);
+    return res.status(200).json("Course Card updated");
+  } catch (error) {
+    next(error);
+  }
+});
+
+const getNumberOfCourseCards = asyncHandler(async (req, res, next) => {
+  try {
+    const numberOfCourseCards = await cardService.getNumberOfCourseCards();
+    return res.status(200).json(numberOfCourseCards);
+  } catch (error) {
+    next(error);
+  }
+});
+
+const getNumberOfPriceCards = asyncHandler(async (req, res, next) => {
+  try {
+    const numberOfCourseCards = await cardService.getNumberOfPriceCards();
+    return res.status(200).json(numberOfCourseCards);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = {
   getPriceCards,
   getCourseCards,
   createCourseCard,
   createPriceCard,
+  deleteCourseCard,
+  deletePriceCard,
+  updateCourseCard,
+  updatePriceCard,
+  getNumberOfCourseCards,
+  getNumberOfPriceCards,
 };
