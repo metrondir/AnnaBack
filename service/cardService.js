@@ -29,7 +29,6 @@ const createCourseCard = asyncHandler(async (req, res, next) => {
 const createPriceCard = asyncHandler(async (req, res, next) => {
   try {
     const imgurLink = await imgur.uploadFile(req.file.path);
-    console.log(imgurLink);
     let PriceCard = req.body;
     PriceCard.image = imgurLink.link;
     PriceCard = new PriceCardModel(PriceCard);
@@ -43,8 +42,15 @@ const createPriceCard = asyncHandler(async (req, res, next) => {
 
 const deleteCourseCard = asyncHandler(async (id) => {
   try {
-    const CourseCard = await CourseCardModel.findByIdAndDelete(id);
-    return CourseCard;
+    const numericId = Number(id);
+    const deletedCourseCard = await CourseCardModel.findOneAndDelete({
+      id: numericId,
+    });
+    const cards = await CourseCardModel.updateMany(
+      { id: { $gt: numericId } },
+      { $inc: { id: -1 } }
+    );
+    return deletedCourseCard;
   } catch (error) {
     throw new Error(error);
   }
@@ -52,28 +58,79 @@ const deleteCourseCard = asyncHandler(async (id) => {
 
 const deletePriceCard = asyncHandler(async (id) => {
   try {
-    const CourseCard = await PriceCardModel.findByIdAndDelete(id);
-    return CourseCard;
+    const numericId = Number(id);
+    const deletedPriceCard = await PriceCardModel.findOneAndDelete({
+      id: numericId,
+    });
+    const cards = await PriceCardModel.updateMany(
+      { id: { $gt: numericId } },
+      { $inc: { id: -1 } }
+    );
+    return deletedPriceCard;
   } catch (error) {
     throw new Error(error);
   }
 });
 
-const updateCourseCard = asyncHandler(async (id, req) => {
+const updateCourseCard = asyncHandler(async (req, res, next) => {
   try {
-    const CourseCard = await CourseCardModel.findByIdAndUpdate(id, req);
-    return CourseCard;
+    if (req.file && req.file.path) {
+      const imgurLink = await imgur.uploadFile(req.file.path);
+      req.body.image = imgurLink.link;
+    }
+
+    const numericId = Number(req.params.id);
+    const existingCourseCard = await CourseCardModel.findOne({ id: numericId });
+
+    // Update only non-empty and non-whitespace fields
+    for (const key in req.body) {
+      if (req.body[key] !== "" && req.body[key].trim() !== "") {
+        existingCourseCard[key] = req.body[key];
+      }
+    }
+
+    const updatedCourseCard = await existingCourseCard.save();
+
+    if (!updatedCourseCard) {
+      return res.status(404).json({ message: "Course card not found" });
+    }
+
+    res.status(200).json(updatedCourseCard);
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-const updatePriceCard = asyncHandler(async (id, req) => {
+const updatePriceCard = asyncHandler(async (req, res, next) => {
   try {
-    const CourseCard = await PriceCardModel.findByIdAndUpdate(id, req);
-    return CourseCard;
+    if (req.file && req.file.path) {
+      const imgurLink = await imgur.uploadFile(req.file.path);
+      req.body.image = imgurLink.link;
+    }
+
+    const numericId = Number(req.params.id);
+
+    const existingCourseCard = await PriceCardModel.findOne({ id: numericId });
+
+    // Update only non-empty and non-whitespace fields
+    for (const key in req.body) {
+      if (req.body[key] !== "" && req.body[key].trim() !== "") {
+        existingCourseCard[key] = req.body[key];
+      }
+    }
+
+    // Save the updated document
+    const updatedPriceCard = await existingCourseCard.save();
+
+    if (!updatedPriceCard) {
+      return res.status(404).json({ message: "Price card not found" });
+    }
+
+    res.status(200).json(updatedPriceCard);
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

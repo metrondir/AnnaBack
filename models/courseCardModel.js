@@ -11,7 +11,7 @@ const courseCardModel = new mongoose.Schema({
   },
   id: {
     type: Number,
-    required: true,
+    default: 0,
     unique: true,
   },
   image: {
@@ -40,10 +40,13 @@ courseCardModel.pre("remove", async function (next) {
     const document = await this.constructor
       .findOne({ _id: this._id })
       .select("id");
-    await this.constructor.updateMany(
-      { id: { $gt: document.id } },
-      { $inc: { id: -1 } }
-    );
+
+    if (document) {
+      await this.constructor.updateMany(
+        { id: { $gt: document.id } },
+        { $inc: { id: -1 } }
+      );
+    }
     next();
   } catch (error) {
     next(error);

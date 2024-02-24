@@ -76,23 +76,28 @@ const deletePriceCard = asyncHandler(async (req, res, next) => {
   }
 });
 
-const updateCourseCard = asyncHandler(async (req, res, next) => {
-  try {
-    await cardService.updateCourseCard(req.params.id, req.body);
-    return res.status(200).json("Course Card updated");
-  } catch (error) {
-    next(error);
-  }
-});
+const updateCourseCard = [
+  upload.single("image"),
+  asyncHandler(async (req, res, next) => {
+    try {
+      console.log(req.body);
+      await cardService.updateCourseCard(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  }),
+];
 
-const updatePriceCard = asyncHandler(async (req, res, next) => {
-  try {
-    await cardService.updatePriceCard(req.params.id, req.body);
-    return res.status(200).json("Course Card updated");
-  } catch (error) {
-    next(error);
-  }
-});
+const updatePriceCard = [
+  upload.single("image"),
+  asyncHandler(async (req, res, next) => {
+    try {
+      await cardService.updatePriceCard(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  }),
+];
 
 const getNumberOfCourseCards = asyncHandler(async (req, res, next) => {
   try {
